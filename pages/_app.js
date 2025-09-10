@@ -48,11 +48,11 @@ function MyApp({ Component, pageProps }) {
         setTimeout(() => {
           const perfData = performance.getEntriesByType('navigation')[0];
           if (perfData) {
-            clientLogger.performance('page_load_time', perfData.loadEventEnd - perfData.fetchStart, {
-              page: router.pathname,
-              domContentLoaded: perfData.domContentLoadedEventEnd - perfData.fetchStart,
-              firstPaint: perfData.responseEnd - perfData.fetchStart
-            });
+            // clientLogger.performance('page_load_time', perfData.loadEventEnd - perfData.fetchStart, {
+            //   page: router.pathname,
+            //   domContentLoaded: perfData.domContentLoadedEventEnd - perfData.fetchStart,
+            //   firstPaint: perfData.responseEnd - perfData.fetchStart
+            // });
           }
         }, 0);
       });

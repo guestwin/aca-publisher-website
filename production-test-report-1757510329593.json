@@ -1,0 +1,115 @@
+{
+  "timestamp": "2025-09-10T13:18:49.558Z",
+  "baseUrl": "http://localhost:3000",
+  "summary": {
+    "totalTests": 15,
+    "passed": 9,
+    "failed": 6,
+    "successRate": "60.00%"
+  },
+  "tests": [
+    {
+      "name": "Website Accessibility",
+      "status": "PASSED",
+      "duration": 537,
+      "timestamp": "2025-09-10T13:18:46.513Z"
+    },
+    {
+      "name": "Security Headers",
+      "status": "PASSED",
+      "duration": 16,
+      "timestamp": "2025-09-10T13:18:46.529Z"
+    },
+    {
+      "name": "Page: Homepage",
+      "status": "PASSED",
+      "duration": 20,
+      "timestamp": "2025-09-10T13:18:46.549Z"
+    },
+    {
+      "name": "Page: Catalog",
+      "status": "PASSED",
+      "duration": 439,
+      "timestamp": "2025-09-10T13:18:46.988Z"
+    },
+    {
+      "name": "Page: About",
+      "status": "PASSED",
+      "duration": 163,
+      "timestamp": "2025-09-10T13:18:47.152Z"
+    },
+    {
+      "name": "Page: Composers",
+      "status": "PASSED",
+      "duration": 141,
+      "timestamp": "2025-09-10T13:18:47.293Z"
+    },
+    {
+      "name": "Page: Auth",
+      "status": "PASSED",
+      "duration": 181,
+      "timestamp": "2025-09-10T13:18:47.474Z"
+    },
+    {
+      "name": "API: Products API",
+      "status": "PASSED",
+      "duration": 177,
+      "timestamp": "2025-09-10T13:18:47.651Z"
+    },
+    {
+      "name": "API: Composers API",
+      "status": "FAILED",
+      "error": "Composers API did not return JSON",
+      "duration": 369,
+      "timestamp": "2025-09-10T13:18:48.020Z"
+    },
+    {
+      "name": "API: Session API",
+      "status": "FAILED",
+      "error": "Session API did not return JSON",
+      "duration": 12,
+      "timestamp": "2025-09-10T13:18:48.032Z"
+    },
+    {
+      "name": "Database Connectivity",
+      "status": "PASSED",
+      "duration": 23,
+      "timestamp": "2025-09-10T13:18:48.055Z"
+    },
+    {
+      "name": "Payment Gateway Check",
+      "status": "FAILED",
+      "error": "Checkout page returned status 500",
+      "duration": 1422,
+      "timestamp": "2025-09-10T13:18:49.478Z"
+    },
+    {
+      "name": "Mobile Responsiveness",
+      "status": "FAILED",
+      "error": "Mobile request failed with status 500",
+      "duration": 12,
+      "timestamp": "2025-09-10T13:18:49.490Z"
+    },
+    {
+      "name": "SEO Basics",
+      "status": "FAILED",
+      "error": "Missing SEO element: <title>",
+      "duration": 12,
+      "timestamp": "2025-09-10T13:18:49.502Z"
+    },
+    {
+      "name": "404 Error Handling",
+      "status": "FAILED",
+      "error": "Expected 404, got 500",
+      "duration": 49,
+      "timestamp": "2025-09-10T13:18:49.552Z"
+    }
+  ],
+  "recommendations": [
+    {
+      "type": "reliability",
+      "message": "High failure rate detected. Review failed tests and fix issues.",
+      "failureRate": "40.00%"
+    }
+  ]
+}

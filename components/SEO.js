@@ -207,16 +207,14 @@ export const ProductSEO = ({ product }) => {
     }
   };
   
-  return (
-    <SEO
-      title={product.title}
-      description={product.description}
-      image={product.image}
-      type="product"
-      structuredData={structuredData}
-      keywords={`${product.title}, ${product.composer}, sheet music, choral arrangement`}
-    />
-  );
+  return SEO({
+    title: product.title,
+    description: product.description,
+    image: product.image,
+    type: "product",
+    structuredData: structuredData,
+    keywords: `${product.title}, ${product.composer}, sheet music, choral arrangement`
+  });
 };
 
 export const ComposerSEO = ({ composer }) => {
@@ -234,16 +232,14 @@ export const ComposerSEO = ({ composer }) => {
     sameAs: composer.socialLinks || []
   };
   
-  return (
-    <SEO
-      title={`${composer.name} - Composer`}
-      description={composer.bio}
-      image={composer.foto}
-      type="profile"
-      structuredData={structuredData}
-      keywords={`${composer.name}, composer, Indonesian music, choral arrangements`}
-    />
-  );
+  return SEO({
+    title: `${composer.name} - Composer`,
+    description: composer.bio,
+    image: composer.foto,
+    type: "profile",
+    structuredData: structuredData,
+    keywords: `${composer.name}, composer, Indonesian music, choral arrangements`
+  });
 };
 
 export const CategorySEO = ({ category, products }) => {
@@ -279,14 +275,12 @@ export const CategorySEO = ({ category, products }) => {
     }
   };
   
-  return (
-    <SEO
-      title={categoryTitles[category]}
-      description={categoryDescriptions[category]}
-      structuredData={structuredData}
-      keywords={`${category} music, Indonesian ${category} songs, choral arrangements`}
-    />
-  );
+  return SEO({
+    title: categoryTitles[category],
+    description: categoryDescriptions[category],
+    structuredData: structuredData,
+    keywords: `${category} music, Indonesian ${category} songs, choral arrangements`
+  });
 };
 
 export default SEO;

@@ -1,0 +1,124 @@
+{
+  "timestamp": "2025-09-10T13:18:04.265Z",
+  "baseUrl": "https://www.acapublisher.com",
+  "summary": {
+    "totalTests": 15,
+    "passed": 0,
+    "failed": 15,
+    "successRate": "0.00%"
+  },
+  "tests": [
+    {
+      "name": "Website Accessibility",
+      "status": "FAILED",
+      "error": "getaddrinfo ENOTFOUND www.acapublisher.com",
+      "duration": 68,
+      "timestamp": "2025-09-10T13:18:04.239Z"
+    },
+    {
+      "name": "Security Headers",
+      "status": "FAILED",
+      "error": "getaddrinfo ENOTFOUND www.acapublisher.com",
+      "duration": 3,
+      "timestamp": "2025-09-10T13:18:04.242Z"
+    },
+    {
+      "name": "Page: Homepage",
+      "status": "FAILED",
+      "error": "getaddrinfo ENOTFOUND www.acapublisher.com",
+      "duration": 2,
+      "timestamp": "2025-09-10T13:18:04.244Z"
+    },
+    {
+      "name": "Page: Catalog",
+      "status": "FAILED",
+      "error": "getaddrinfo ENOTFOUND www.acapublisher.com",
+      "duration": 2,
+      "timestamp": "2025-09-10T13:18:04.246Z"
+    },
+    {
+      "name": "Page: About",
+      "status": "FAILED",
+      "error": "getaddrinfo ENOTFOUND www.acapublisher.com",
+      "duration": 1,
+      "timestamp": "2025-09-10T13:18:04.247Z"
+    },
+    {
+      "name": "Page: Composers",
+      "status": "FAILED",
+      "error": "getaddrinfo ENOTFOUND www.acapublisher.com",
+      "duration": 1,
+      "timestamp": "2025-09-10T13:18:04.249Z"
+    },
+    {
+      "name": "Page: Auth",
+      "status": "FAILED",
+      "error": "getaddrinfo ENOTFOUND www.acapublisher.com",
+      "duration": 1,
+      "timestamp": "2025-09-10T13:18:04.250Z"
+    },
+    {
+      "name": "API: Products API",
+      "status": "FAILED",
+      "error": "getaddrinfo ENOTFOUND www.acapublisher.com",
+      "duration": 1,
+      "timestamp": "2025-09-10T13:18:04.252Z"
+    },
+    {
+      "name": "API: Composers API",
+      "status": "FAILED",
+      "error": "getaddrinfo ENOTFOUND www.acapublisher.com",
+      "duration": 2,
+      "timestamp": "2025-09-10T13:18:04.255Z"
+    },
+    {
+      "name": "API: Session API",
+      "status": "FAILED",
+      "error": "getaddrinfo ENOTFOUND www.acapublisher.com",
+      "duration": 3,
+      "timestamp": "2025-09-10T13:18:04.258Z"
+    },
+    {
+      "name": "Database Connectivity",
+      "status": "FAILED",
+      "error": "getaddrinfo ENOTFOUND www.acapublisher.com",
+      "duration": 1,
+      "timestamp": "2025-09-10T13:18:04.259Z"
+    },
+    {
+      "name": "Payment Gateway Check",
+      "status": "FAILED",
+      "error": "getaddrinfo ENOTFOUND www.acapublisher.com",
+      "duration": 1,
+      "timestamp": "2025-09-10T13:18:04.260Z"
+    },
+    {
+      "name": "Mobile Responsiveness",
+      "status": "FAILED",
+      "error": "getaddrinfo ENOTFOUND www.acapublisher.com",
+      "duration": 1,
+      "timestamp": "2025-09-10T13:18:04.262Z"
+    },
+    {
+      "name": "SEO Basics",
+      "status": "FAILED",
+      "error": "getaddrinfo ENOTFOUND www.acapublisher.com",
+      "duration": 1,
+      "timestamp": "2025-09-10T13:18:04.263Z"
+    },
+    {
+      "name": "404 Error Handling",
+      "status": "FAILED",
+      "error": "getaddrinfo ENOTFOUND www.acapublisher.com",
+      "duration": 1,
+      "timestamp": "2025-09-10T13:18:04.265Z"
+    }
+  ],
+  "recommendations": [
+    {
+      "type": "reliability",
+      "message": "High failure rate detected. Review failed tests and fix issues.",
+      "failureRate": "100.00%"
+    }
+  ]
+}

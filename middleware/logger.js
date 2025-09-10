@@ -1,13 +1,17 @@
 // Logger Middleware
 // Sistem logging yang konsisten untuk monitoring dan debugging
 
-import fs from 'fs';
-import path from 'path';
-
-// Ensure logs directory exists
-const logsDir = path.join(process.cwd(), 'logs');
-if (!fs.existsSync(logsDir)) {
-  fs.mkdirSync(logsDir, { recursive: true });
+// Only import Node.js modules on server side
+let fs, path, logsDir;
+if (typeof window === 'undefined') {
+  fs = require('fs');
+  path = require('path');
+  
+  // Ensure logs directory exists
+  logsDir = path.join(process.cwd(), 'logs');
+  if (!fs.existsSync(logsDir)) {
+    fs.mkdirSync(logsDir, { recursive: true });
+  }
 }
 
 // Log levels
@@ -53,12 +57,15 @@ class Logger {
     return JSON.stringify(logEntry);
   }
 
-  // Write to file
+  // Write to file (server-side only)
   writeToFile(filename, message) {
-    try {
-      fs.appendFileSync(filename, message + '\n');
-    } catch (error) {
-      console.error('Failed to write to log file:', error);
+    // Only write to file on server side
+    if (typeof window === 'undefined' && fs && filename) {
+      try {
+        fs.appendFileSync(filename, message + '\n');
+      } catch (error) {
+        console.error('Failed to write to log file:', error);
+      }
     }
   }
 

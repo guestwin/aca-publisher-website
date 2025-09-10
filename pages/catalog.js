@@ -107,169 +107,124 @@ export default function Catalog() {
       <Navbar />
       
       {/* Header */}
-      <div className="bg-white shadow-sm pt-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="bg-white pt-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center">
-            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              Katalog Produk
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Katalog Partitur
             </h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Jelajahi koleksi lengkap partitur musik dari ACA Publisher
+            <p className="text-lg text-gray-600">
+              Temukan partitur yang Anda butuhkan
             </p>
           </div>
         </div>
       </div>
 
       <main className="flex-grow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex flex-col lg:flex-row gap-8">
-            
-            {/* Sidebar Filter */}
-            <div className="lg:w-1/4">
-              <div className="bg-white rounded-lg shadow-sm p-6 sticky top-24">
-                
-                {/* Search */}
-                <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Cari Produk
-                  </label>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          
+          {/* Search and Filter Bar */}
+          <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
+            <div className="flex flex-col md:flex-row gap-4">
+              
+              {/* Search */}
+              <div className="flex-1">
+                <div className="relative">
                   <input
                     type="text"
-                    placeholder="Nama produk atau komposer..."
+                    placeholder="Cari partitur atau komposer..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                   />
-                </div>
-
-                {/* Category Filter */}
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Kategori</h3>
-                  <div className="space-y-2">
-                    {categories.map(category => (
-                      <button
-                        key={category.id}
-                        onClick={() => setSelectedCategory(category.id)}
-                        className={`w-full text-left px-3 py-2 rounded-md transition-colors ${
-                          selectedCategory === category.id
-                            ? 'bg-black text-white'
-                            : 'text-gray-700 hover:bg-gray-100'
-                        }`}
-                      >
-                        <div className="flex justify-between items-center">
-                          <span>{category.name}</span>
-                          <span className="text-sm opacity-75">
-                            ({getCategoryCount(category.id)})
-                          </span>
-                        </div>
-                      </button>
-                    ))}
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
                   </div>
                 </div>
-
-                {/* Sort Options */}
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Urutkan</h3>
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
-                  >
-                    <option value="name">Nama A-Z</option>
-                    <option value="name-desc">Nama Z-A</option>
-                    <option value="price-low">Harga Terendah</option>
-                    <option value="price-high">Harga Tertinggi</option>
-                    <option value="composer">Komposer A-Z</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            {/* Main Content */}
-            <div className="lg:w-3/4">
-              
-              {/* Results Header */}
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 bg-white rounded-lg shadow-sm p-4">
-                <div>
-                  <h2 className="text-xl font-semibold text-gray-900">
-                    {selectedCategory === 'all' 
-                      ? 'Semua Produk' 
-                      : categories.find(cat => cat.id === selectedCategory)?.name
-                    }
-                  </h2>
-                  <p className="text-gray-600">
-                    Menampilkan {filteredProducts.length} dari {products.length} produk
-                  </p>
-                </div>
-                
-                {/* Quick Sort Mobile */}
-                <div className="mt-4 sm:mt-0 sm:hidden">
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
-                  >
-                    <option value="name">Nama A-Z</option>
-                    <option value="name-desc">Nama Z-A</option>
-                    <option value="price-low">Harga Terendah</option>
-                    <option value="price-high">Harga Tertinggi</option>
-                    <option value="composer">Komposer A-Z</option>
-                  </select>
-                </div>
               </div>
 
-              {/* Loading State */}
-              {isLoading ? (
-                <div className="text-center py-12">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4"></div>
-                  <p className="text-gray-600">Memuat produk...</p>
-                </div>
-              ) : filteredProducts.length === 0 ? (
-                <div className="text-center py-12 bg-white rounded-lg shadow-sm">
-                  <div className="text-gray-400 text-6xl mb-4">🔍</div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">Tidak ada produk ditemukan</h3>
-                  <p className="text-gray-600 mb-4">Coba ubah filter atau kata kunci pencarian</p>
-                  <button
-                    onClick={() => {
-                      setSelectedCategory('all');
-                      setSearchTerm('');
-                      setSortBy('name');
-                    }}
-                    className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-colors"
-                  >
-                    Reset Filter
-                  </button>
-                </div>
-              ) : (
-                /* Products by Alphabet */
-                <div className="space-y-8">
-                  {alphabetKeys.map(letter => (
-                    <div key={letter} className="bg-white rounded-lg shadow-sm p-6">
-                      <div className="flex items-center mb-6">
-                        <div className="bg-black text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mr-4">
-                          {letter}
-                        </div>
-                        <div>
-                          <h3 className="text-xl font-semibold text-gray-900">
-                            Huruf {letter}
-                          </h3>
-                          <p className="text-gray-600">
-                            {groupedProducts[letter].length} produk
-                          </p>
-                        </div>
-                      </div>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {groupedProducts[letter].map(product => (
-                          <ProductCard key={product._id} product={product} />
-                        ))}
-                      </div>
-                    </div>
+              {/* Category Filter */}
+              <div className="md:w-48">
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                >
+                  {categories.map(category => (
+                    <option key={category.id} value={category.id}>
+                      {category.name} ({getCategoryCount(category.id)})
+                    </option>
                   ))}
-                </div>
-              )}
+                </select>
+              </div>
+
+              {/* Sort Options */}
+              <div className="md:w-48">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                >
+                  <option value="name">Nama A-Z</option>
+                  <option value="name-desc">Nama Z-A</option>
+                  <option value="price-low">Harga Terendah</option>
+                  <option value="price-high">Harga Tertinggi</option>
+                  <option value="composer">Komposer A-Z</option>
+                </select>
+              </div>
             </div>
           </div>
+
+          {/* Results Header */}
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900">
+                {selectedCategory === 'all' 
+                  ? 'Semua Partitur' 
+                  : categories.find(cat => cat.id === selectedCategory)?.name
+                }
+              </h2>
+              <p className="text-gray-600">
+                {filteredProducts.length} partitur ditemukan
+              </p>
+            </div>
+          </div>
+
+              {/* Loading State */}
+          {isLoading ? (
+            <div className="text-center py-16">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+              <p className="mt-4 text-gray-600">Memuat partitur...</p>
+            </div>
+          ) : filteredProducts.length === 0 ? (
+            <div className="text-center py-16">
+              <div className="text-gray-400 mb-4">
+                <svg className="mx-auto h-16 w-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.291-1.007-5.824-2.562M15 6.306A7.962 7.962 0 0112 5c-2.34 0-4.291 1.007-5.824 2.562" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-medium text-gray-900 mb-2">Partitur tidak ditemukan</h3>
+              <p className="text-gray-600 mb-6">Coba ubah kata kunci atau filter pencarian</p>
+              <button
+                onClick={() => {
+                  setSelectedCategory('all');
+                  setSearchTerm('');
+                  setSortBy('name');
+                }}
+                className="inline-flex items-center px-6 py-3 border border-transparent text-sm font-medium rounded-lg text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors"
+              >
+                Reset Pencarian
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredProducts.map(product => (
+                <ProductCard key={product._id} product={product} />
+              ))}
+            </div>
+          )}
         </div>
       </main>
 

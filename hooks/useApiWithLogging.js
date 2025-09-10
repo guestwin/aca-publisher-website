@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import clientLogger from '../lib/clientLogger';
+// import clientLogger from '../lib/clientLogger'; // Temporarily disabled
 
 // Custom hook for API calls with automatic logging
 export const useApiWithLogging = () => {
@@ -14,11 +14,11 @@ export const useApiWithLogging = () => {
     setError(null);
 
     // Log API call start
-    clientLogger.info('API Call Start', {
-      method,
-      url,
-      timestamp: Date.now()
-    });
+    // clientLogger.info('API Call Start', {
+    //   method,
+    //   url,
+    //   timestamp: Date.now()
+    // });
 
     try {
       const response = await fetch(url, {
@@ -33,10 +33,10 @@ export const useApiWithLogging = () => {
       const status = response.status;
 
       // Log API response
-      clientLogger.apiCall(method, url, status, duration, {
-        success: response.ok,
-        statusText: response.statusText
-      });
+      // clientLogger.apiCall(method, url, status, duration, {
+      //   success: response.ok,
+      //   statusText: response.statusText
+      // });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({
@@ -49,13 +49,13 @@ export const useApiWithLogging = () => {
       const data = await response.json();
       
       // Log successful response data (without sensitive info)
-      clientLogger.info('API Call Success', {
-        method,
-        url,
-        status,
-        duration,
-        dataSize: JSON.stringify(data).length
-      });
+      // clientLogger.info('API Call Success', {
+      //   method,
+      //   url,
+      //   status,
+      //   duration,
+      //   dataSize: JSON.stringify(data).length
+      // });
 
       return data;
 
@@ -63,12 +63,12 @@ export const useApiWithLogging = () => {
       const duration = performance.now() - startTime;
       
       // Log API error
-      clientLogger.error('API Call Failed', err, {
-        method,
-        url,
-        duration,
-        timestamp: Date.now()
-      });
+      // clientLogger.error('API Call Failed', err, {
+      //   method,
+      //   url,
+      //   duration,
+      //   timestamp: Date.now()
+      // });
 
       setError(err.message);
       throw err;
@@ -140,21 +140,21 @@ export const useFormWithLogging = (onSubmit, formName = 'Unknown Form') => {
     setSubmitError(null);
 
     // Log form submission start
-    clientLogger.userAction('form_submit_start', event?.target, {
-      formName,
-      timestamp: Date.now()
-    });
+    // clientLogger.userAction('form_submit_start', event?.target, {
+    //   formName,
+    //   timestamp: Date.now()
+    // });
 
     try {
       const result = await onSubmit(formData, event);
       const duration = performance.now() - startTime;
 
       // Log successful form submission
-      clientLogger.userAction('form_submit_success', event?.target, {
-        formName,
-        duration,
-        timestamp: Date.now()
-      });
+      // clientLogger.userAction('form_submit_success', event?.target, {
+      //   formName,
+      //   duration,
+      //   timestamp: Date.now()
+      // });
 
       return result;
 
@@ -162,11 +162,11 @@ export const useFormWithLogging = (onSubmit, formName = 'Unknown Form') => {
       const duration = performance.now() - startTime;
       
       // Log form submission error
-      clientLogger.error('Form Submission Failed', error, {
-        formName,
-        duration,
-        timestamp: Date.now()
-      });
+      // clientLogger.error('Form Submission Failed', error, {
+      //   formName,
+      //   duration,
+      //   timestamp: Date.now()
+      // });
 
       setSubmitError(error.message);
       throw error;
@@ -185,43 +185,43 @@ export const useFormWithLogging = (onSubmit, formName = 'Unknown Form') => {
 // Hook for user interaction logging
 export const useUserInteraction = () => {
   const logClick = useCallback((element, action = 'click', data = {}) => {
-    clientLogger.userAction(action, element, {
-      ...data,
-      timestamp: Date.now()
-    });
+    // clientLogger.userAction(action, element, {
+    //   ...data,
+    //   timestamp: Date.now()
+    // });
   }, []);
 
   const logPageView = useCallback((page, data = {}) => {
-    clientLogger.info('Page View', {
-      page,
-      ...data,
-      timestamp: Date.now(),
-      referrer: document.referrer,
-      url: window.location.href
-    });
+    // clientLogger.info('Page View', {
+    //   page,
+    //   ...data,
+    //   timestamp: Date.now(),
+    //   referrer: document.referrer,
+    //   url: window.location.href
+    // });
   }, []);
 
   const logSearch = useCallback((query, results = null, data = {}) => {
-    clientLogger.userAction('search', null, {
-      query,
-      resultsCount: results?.length || null,
-      ...data,
-      timestamp: Date.now()
-    });
+    // clientLogger.userAction('search', null, {
+    //   query,
+    //   resultsCount: results?.length || null,
+    //   ...data,
+    //   timestamp: Date.now()
+    // });
   }, []);
 
   const logPurchase = useCallback((items, total, data = {}) => {
-    clientLogger.userAction('purchase', null, {
-      items: items.map(item => ({
-        id: item.id,
-        name: item.name,
-        price: item.price,
-        quantity: item.quantity
-      })),
-      total,
-      ...data,
-      timestamp: Date.now()
-    });
+    // clientLogger.userAction('purchase', null, {
+    //   items: items.map(item => ({
+    //     id: item.id,
+    //     name: item.name,
+    //     price: item.price,
+    //     quantity: item.quantity
+    //   })),
+    //   total,
+    //   ...data,
+    //   timestamp: Date.now()
+    // });
   }, []);
 
   return {

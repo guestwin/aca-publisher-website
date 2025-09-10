@@ -1,5 +1,5 @@
 import React from 'react';
-import clientLogger from '../lib/clientLogger';
+// import clientLogger from '../lib/clientLogger'; // Temporarily disabled
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -14,7 +14,7 @@ class ErrorBoundary extends React.Component {
 
   componentDidCatch(error, errorInfo) {
     // Log the error to our logging service
-    clientLogger.reactError(error, errorInfo, errorInfo.componentStack);
+    // clientLogger.reactError(error, errorInfo, errorInfo.componentStack);
     
     // Store error details in state
     this.setState({
@@ -24,18 +24,18 @@ class ErrorBoundary extends React.Component {
 
     // Log additional context if provided
     if (this.props.context) {
-      clientLogger.error('Error Boundary Context', null, {
-        context: this.props.context,
-        props: this.props.logProps ? this.props : undefined
-      });
+      // clientLogger.error('Error Boundary Context', null, {
+      //   context: this.props.context,
+      //   props: this.props.logProps ? this.props : undefined
+      // });
     }
   }
 
   handleRetry = () => {
-    clientLogger.userAction('error_boundary_retry', null, {
-      error: this.state.error?.message,
-      component: this.props.fallbackComponent || 'ErrorBoundary'
-    });
+    // clientLogger.userAction('error_boundary_retry', null, {
+    //   error: this.state.error?.message,
+    //   component: this.props.fallbackComponent || 'ErrorBoundary'
+    // });
     
     this.setState({ 
       hasError: false, 
@@ -45,9 +45,9 @@ class ErrorBoundary extends React.Component {
   };
 
   handleReload = () => {
-    clientLogger.userAction('error_boundary_reload', null, {
-      error: this.state.error?.message
-    });
+    // clientLogger.userAction('error_boundary_reload', null, {
+    //   error: this.state.error?.message
+    // });
     
     window.location.reload();
   };
@@ -152,7 +152,8 @@ export const withErrorBoundary = (WrappedComponent, errorBoundaryProps = {}) => 
 // Hook for manual error reporting
 export const useErrorHandler = () => {
   return React.useCallback((error, errorInfo = {}) => {
-    clientLogger.error('Manual Error Report', error, errorInfo);
+    // clientLogger.error('Manual Error Report', error, errorInfo); // Temporarily disabled
+    console.error('Manual Error Report', error, errorInfo);
   }, []);
 };
 
