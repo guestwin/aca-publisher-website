@@ -36,8 +36,10 @@ const ComposerLogin = () => {
       const data = await response.json();
 
       if (response.ok) {
+        console.log('Login successful, redirecting to dashboard...');
         // Set cookie untuk session komposer
         document.cookie = `composer_token=${data.token}; path=/; max-age=86400`;
+        console.log('Cookie set, calling router.push...');
         router.push('/composer/dashboard');
       } else {
         setError(data.message || 'Login gagal');

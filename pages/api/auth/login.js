@@ -2,37 +2,45 @@ import connectDB from '../../../lib/db';
 import User from '../../../models/User';
 import jwt from 'jsonwebtoken';
 import { validateLoginAttempts } from '../../../middleware/auth';
+import { authRateLimit } from '../../../middleware/rateLimiter';
+import { validateEmail } from '../../../utils/validation';
+import { errorHandler, ValidationError, AuthenticationError, successResponse } from '../../../lib/errorHandler';
+import { logger, authLogger } from '../../../middleware/logger';
 
 const handler = async (req, res) => {
   if (req.method !== 'POST') {
-    console.log('Method tidak diizinkan:', req.method);
-    return res.status(405).json({
-      success: false,
-      message: 'Method tidak diizinkan'
-    });
+    throw new ValidationError('Method not allowed');
   }
 
-  try {
-    console.log('Mencoba koneksi ke database...');
-    await connectDB();
-    console.log('Koneksi database berhasil');
+  const clientIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  logger.info('Login attempt', { ip: clientIP });
+  
+  await connectDB();
 
-    const { email, password } = req.body;
-    console.log('Menerima permintaan login untuk email:', email);
+  const { email, password } = req.body;
 
-    if (!email || !password) {
-      console.log('Email atau password kosong');
-      return res.status(400).json({
-        success: false,
-        message: 'Email dan password harus diisi'
-      });
-    }
+  // Validasi dan sanitasi input
+  if (!email || !password) {
+    authLogger.login(null, email, false, clientIP);
+    throw new ValidationError('Email and password are required', {
+      email: !email ? 'Email is required' : undefined,
+      password: !password ? 'Password is required' : undefined
+    });
+  }
+  
+  const emailValidation = validateEmail(email);
+  if (!emailValidation.isValid) {
+    authLogger.login(null, email, false, clientIP);
+    throw new ValidationError(emailValidation.message);
+  }
+  
+  const sanitizedEmail = emailValidation.sanitized;
 
-    // Cek apakah ini adalah permintaan pembuatan admin pertama
-    console.log('Memeriksa keberadaan admin...');
-    const adminExists = await User.findOne({ role: 'admin' });
-    if (!adminExists && email === 'admin@acapubweb.com' && password === 'adminACA2024!') {
-      console.log('Admin belum ada, membuat akun admin pertama...');
+  // Cek apakah ini adalah permintaan pembuatan admin pertama
+  logger.info('Checking for existing admin');
+  const adminExists = await User.findOne({ role: 'admin' });
+  if (!adminExists && sanitizedEmail === 'admin@acapubweb.com' && password === 'adminACA2024!') {
+    logger.info('Creating first admin account');
       // Buat akun admin pertama
       const admin = await User.create({
         name: 'Admin ACA',
@@ -48,92 +56,89 @@ const handler = async (req, res) => {
         { expiresIn: '24h' }
       );
 
-      console.log('Akun admin berhasil dibuat');
-      return res.status(201).json({
-        success: true,
+      authLogger.login(admin._id, admin.email, true, clientIP);
+      logger.info('First admin account created successfully');
+      
+      return successResponse(res, {
         token,
         user: {
           id: admin._id,
           name: admin.name,
           email: admin.email,
           role: admin.role
-        },
-        message: 'Akun admin berhasil dibuat'
-      });
+        }
+      }, 'Admin account created successfully', 201);
     }
 
-    console.log('Mencari user dengan email:', email);
-    // Cari user dan include password untuk verifikasi
-    const user = await User.findOne({ email }).select('+password');
+  logger.info('Looking up user', { email: sanitizedEmail });
+  // Cari user dan include password untuk verifikasi
+  const user = await User.findOne({ email: sanitizedEmail }).select('+password');
 
-    if (!user) {
-      console.log('User tidak ditemukan');
-      return res.status(401).json({
-        success: false,
-        message: 'Email atau password salah'
-      });
-    }
-
-    // Cek apakah akun terkunci
-    if (user.isLocked()) {
-      console.log('Akun terkunci:', email);
-      return res.status(423).json({
-        success: false,
-        message: 'Akun terkunci karena terlalu banyak percobaan login. Silakan coba lagi nanti.'
-      });
-    }
-
-    console.log('Memverifikasi password...');
-    // Verifikasi password
-    const isMatch = await user.matchPassword(password);
-
-    if (!isMatch) {
-      console.log('Password tidak cocok untuk user:', email);
-      // Tambah percobaan login gagal
-      await user.incrementLoginAttempts();
-
-      return res.status(401).json({
-        success: false,
-        message: 'Email atau password salah'
-      });
-    }
-
-    console.log('Login berhasil, mereset login attempts...');
-    // Reset login attempts jika berhasil
-    await User.findByIdAndUpdate(user._id, {
-      loginAttempts: 0,
-      lockUntil: null,
-      lastLogin: Date.now()
-    });
-
-    // Buat token
-    const token = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: '24h' }
-    );
-
-    console.log('Mengirim respons sukses untuk user:', email);
-    res.status(200).json({
-      success: true,
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        avatar: user.avatar,
-        phone: user.phone,
-        notificationPreferences: user.notificationPreferences
-      }
-    });
-  } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Error saat login'
-    });
+  if (!user) {
+    authLogger.login(null, sanitizedEmail, false, clientIP);
+    throw new AuthenticationError('Invalid email or password');
   }
+
+  // Cek apakah akun terkunci
+  if (user.isLocked()) {
+    authLogger.login(user._id, sanitizedEmail, false, clientIP, 'Account locked');
+    throw new AuthenticationError('Account locked due to too many failed login attempts. Please try again later.', { lockUntil: user.lockUntil });
+
+  logger.info('Verifying password');
+  // Verifikasi password
+  const isMatch = await user.matchPassword(password);
+
+  if (!isMatch) {
+    // Tambah percobaan login gagal
+    await user.incrementLoginAttempts();
+    authLogger.login(user._id, sanitizedEmail, false, clientIP, 'Invalid password');
+    throw new AuthenticationError('Invalid email or password');
+  }
+
+  logger.info('Login successful, resetting login attempts');
+  // Reset login attempts jika berhasil
+  await User.findByIdAndUpdate(user._id, {
+    loginAttempts: 0,
+    lockUntil: null,
+    lastLogin: Date.now()
+  });
+
+  // Buat token
+  const token = jwt.sign(
+    { id: user._id, role: user.role },
+    process.env.JWT_SECRET,
+    { expiresIn: '24h' }
+  );
+
+  authLogger.login(user._id, user.email, true, clientIP);
+  logger.info('Login successful', { userId: user._id, email: user.email });
+  
+  return successResponse(res, {
+    token,
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      avatar: user.avatar,
+      phone: user.phone,
+      notificationPreferences: user.notificationPreferences
+    }
+  }, 'Login successful');
 };
 
-export default handler;
+// Apply rate limiting and error handling middleware
+const rateLimitedHandler = async (req, res) => {
+  return new Promise((resolve, reject) => {
+    authRateLimit(req, res, (result) => {
+      if (result instanceof Error) {
+        return reject(result);
+      }
+      return resolve(errorHandler(handler)(req, res));
+    });
+  });
+};
+
+} // Close the if(user.isLocked()) block that was missing a closing brace
+
+export default rateLimitedHandler;

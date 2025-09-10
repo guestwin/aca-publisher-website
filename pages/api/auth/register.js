@@ -2,43 +2,39 @@ import connectDB from '../../../lib/db';
 import User from '../../../models/User';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import { authRateLimit } from '../../../middleware/rateLimiter';
+import { validateUserInput } from '../../../utils/validation';
+import { errorHandler, ValidationError, ConflictError, successResponse } from '../../../lib/errorHandler';
+import { logger, authLogger } from '../../../middleware/logger';
 
 const handler = async (req, res) => {
   if (req.method !== 'POST') {
-    return res.status(405).json({
-      success: false,
-      message: 'Method tidak diizinkan'
-    });
+    throw new ValidationError('Method not allowed');
   }
 
-  try {
-    await connectDB();
+  const clientIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  logger.info('Registration attempt', { ip: clientIP });
+  
+  await connectDB();
 
-    const { name, email, phone, password, role = 'user', notificationPreferences } = req.body;
+  const { name, email, phone, password, role = 'user', notificationPreferences } = req.body;
 
-    // Validasi input
-    if (!name || !email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: 'Nama, email, dan password harus diisi'
-      });
-    }
-
-    // Validasi format phone jika ada
-    if (phone && !/^[\+]?[1-9][\d]{0,15}$/.test(phone)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Format nomor telepon tidak valid'
-      });
-    }
+  // Validasi dan sanitasi input
+  const validationResult = validateUserInput({ name, email, phone, password });
+  
+  if (!validationResult.isValid) {
+    authLogger.register(null, email, false, clientIP, 'Invalid input data');
+    throw new ValidationError('Input tidak valid', validationResult.errors);
+  }
+    
+    // Gunakan data yang sudah disanitasi
+    const sanitizedData = validationResult.sanitized;
 
     // Cek apakah email sudah terdaftar
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email: sanitizedData.email });
     if (existingUser) {
-      return res.status(400).json({
-        success: false,
-        message: 'Email sudah terdaftar'
-      });
+      authLogger.register(null, sanitizedData.email, false, clientIP, 'Email already exists');
+      throw new ConflictError('Email sudah terdaftar');
     }
 
     // Buat verification token
@@ -46,54 +42,52 @@ const handler = async (req, res) => {
 
     // Buat user baru
     const user = await User.create({
-      name,
-      email,
-      phone,
-      password,
+      name: sanitizedData.name,
+      email: sanitizedData.email,
+      phone: sanitizedData.phone,
+      password: sanitizedData.password,
       role,
       verificationToken,
       notificationPreferences: notificationPreferences || {
         email: true,
-        whatsapp: phone ? true : false
+        whatsapp: sanitizedData.phone ? true : false
       }
     });
 
-    // Buat JWT token
-    const token = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: '24h' }
-    );
+  // Buat JWT token
+  const token = jwt.sign(
+    { id: user._id, role: user.role },
+    process.env.JWT_SECRET,
+    { expiresIn: '24h' }
+  );
 
-    // TODO: Kirim email verifikasi
-    // await sendVerificationEmail(user.email, verificationToken);
+  // TODO: Kirim email verifikasi
+  // await sendVerificationEmail(user.email, verificationToken);
 
-    res.status(201).json({
-      success: true,
-      message: 'Registrasi berhasil',
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role
-      }
-    });
-  } catch (error) {
-    console.error('Register error:', error);
+  authLogger.register(user._id, user.email, true, clientIP);
+  logger.info('User registered successfully', { userId: user._id, email: user.email });
 
-    if (error.code === 11000) {
-      return res.status(400).json({
-        success: false,
-        message: 'Email sudah terdaftar'
-      });
+  return successResponse(res, {
+    token,
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role
     }
-
-    res.status(500).json({
-      success: false,
-      message: 'Error saat registrasi'
-    });
-  }
+  }, 'Registration successful', 201);
 };
 
-export default handler;
+// Apply rate limiting and error handling middleware
+const rateLimitedHandler = async (req, res) => {
+  return new Promise((resolve, reject) => {
+    authRateLimit(req, res, (result) => {
+      if (result instanceof Error) {
+        return reject(result);
+      }
+      return resolve(errorHandler(handler)(req, res));
+    });
+  });
+};
+
+export default rateLimitedHandler;

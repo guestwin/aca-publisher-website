@@ -1,14 +1,18 @@
 import jwt from 'jsonwebtoken';
 import connectDB from '../lib/db';
 import User from '../models/User';
+import { AuthenticationError, AuthorizationError } from '../lib/errorHandler';
+import { logger, authLogger } from './logger';
 
 // Middleware untuk verifikasi token JWT
 export const verifyToken = async (req, res, next) => {
   try {
     const token = req.headers.authorization?.split(' ')[1] || req.cookies.token;
+    const clientIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     
     if (!token) {
-      return res.status(401).json({ message: 'Token tidak ditemukan' });
+      authLogger.middleware('verifyToken', null, false, clientIP, 'No token provided');
+      throw new AuthenticationError('Access token required');
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -17,32 +21,46 @@ export const verifyToken = async (req, res, next) => {
     const user = await User.findById(decoded.userId).select('-password');
     
     if (!user) {
-      return res.status(401).json({ message: 'User tidak ditemukan' });
+      authLogger.middleware('verifyToken', decoded.userId, false, clientIP, 'User not found');
+      throw new AuthenticationError('User not found');
     }
 
     req.user = user;
+    authLogger.middleware('verifyToken', user._id, true, clientIP);
     next();
   } catch (error) {
-    console.error('Token verification error:', error);
-    return res.status(401).json({ message: 'Token tidak valid' });
+    const clientIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    if (error.name === 'JsonWebTokenError') {
+      authLogger.middleware('verifyToken', null, false, clientIP, 'Invalid token');
+      throw new AuthenticationError('Invalid access token');
+    }
+    if (error.name === 'TokenExpiredError') {
+      authLogger.middleware('verifyToken', null, false, clientIP, 'Token expired');
+      throw new AuthenticationError('Access token expired');
+    }
+    throw error;
   }
 };
 
 // Middleware untuk verifikasi role admin
 export const requireAdmin = async (req, res, next) => {
   try {
+    const clientIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    
     if (!req.user) {
-      return res.status(401).json({ message: 'Unauthorized' });
+      authLogger.middleware('requireAdmin', null, false, clientIP, 'No user in request');
+      throw new AuthenticationError('Authentication required');
     }
 
     if (req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'Akses ditolak. Hanya admin yang diizinkan.' });
+      authLogger.middleware('requireAdmin', req.user._id, false, clientIP, 'Insufficient privileges');
+      throw new AuthorizationError('Admin access required');
     }
 
+    authLogger.middleware('requireAdmin', req.user._id, true, clientIP);
     next();
   } catch (error) {
-    console.error('Admin verification error:', error);
-    return res.status(500).json({ message: 'Server error' });
+    throw error;
   }
 };
 

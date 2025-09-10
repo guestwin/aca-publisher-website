@@ -1,0 +1,15 @@
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "user": {
+      "id": "user123",
+      "name": "Test User",
+      "email": "test@example.com",
+      "role": "user",
+      "isVerified": true
+    },
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InVzZXIxMjMiLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTcwNDEwMDgwMCwiZXhwIjoxNzA0MTg3MjAwfQ.test-signature",
+    "expiresIn": "24h"
+  }
+}

@@ -1,0 +1,149 @@
+{
+  "success": true,
+  "data": {
+    "products": [
+      {
+        "id": "prod1",
+        "name": "Smartphone XYZ",
+        "description": "Latest smartphone with advanced features",
+        "price": 699.99,
+        "originalPrice": 799.99,
+        "category": "electronics",
+        "brand": "TechBrand",
+        "stock": 50,
+        "images": [
+          "/images/products/smartphone-1.jpg",
+          "/images/products/smartphone-2.jpg"
+        ],
+        "rating": 4.5,
+        "reviewCount": 128,
+        "features": [
+          "6.1-inch display",
+          "128GB storage",
+          "Dual camera",
+          "5G ready"
+        ],
+        "isOnSale": true,
+        "createdAt": "2024-01-01T00:00:00.000Z"
+      },
+      {
+        "id": "prod2",
+        "name": "Wireless Headphones",
+        "description": "Premium noise-cancelling wireless headphones",
+        "price": 199.99,
+        "originalPrice": 199.99,
+        "category": "electronics",
+        "brand": "AudioTech",
+        "stock": 25,
+        "images": [
+          "/images/products/headphones-1.jpg"
+        ],
+        "rating": 4.8,
+        "reviewCount": 89,
+        "features": [
+          "Active noise cancellation",
+          "30-hour battery life",
+          "Bluetooth 5.0",
+          "Quick charge"
+        ],
+        "isOnSale": false,
+        "createdAt": "2024-01-02T00:00:00.000Z"
+      },
+      {
+        "id": "prod3",
+        "name": "Gaming Laptop",
+        "description": "High-performance gaming laptop for professionals",
+        "price": 1299.99,
+        "originalPrice": 1499.99,
+        "category": "computers",
+        "brand": "GameTech",
+        "stock": 15,
+        "images": [
+          "/images/products/laptop-1.jpg",
+          "/images/products/laptop-2.jpg",
+          "/images/products/laptop-3.jpg"
+        ],
+        "rating": 4.7,
+        "reviewCount": 45,
+        "features": [
+          "Intel i7 processor",
+          "16GB RAM",
+          "RTX 3060 GPU",
+          "1TB SSD"
+        ],
+        "isOnSale": true,
+        "createdAt": "2024-01-03T00:00:00.000Z"
+      },
+      {
+        "id": "prod4",
+        "name": "Smart Watch",
+        "description": "Fitness tracking smartwatch with health monitoring",
+        "price": 299.99,
+        "originalPrice": 299.99,
+        "category": "wearables",
+        "brand": "FitTech",
+        "stock": 40,
+        "images": [
+          "/images/products/smartwatch-1.jpg"
+        ],
+        "rating": 4.3,
+        "reviewCount": 67,
+        "features": [
+          "Heart rate monitor",
+          "GPS tracking",
+          "Water resistant",
+          "7-day battery"
+        ],
+        "isOnSale": false,
+        "createdAt": "2024-01-04T00:00:00.000Z"
+      },
+      {
+        "id": "prod5",
+        "name": "Bluetooth Speaker",
+        "description": "Portable wireless speaker with premium sound",
+        "price": 79.99,
+        "originalPrice": 99.99,
+        "category": "electronics",
+        "brand": "SoundWave",
+        "stock": 60,
+        "images": [
+          "/images/products/speaker-1.jpg"
+        ],
+        "rating": 4.4,
+        "reviewCount": 156,
+        "features": [
+          "360-degree sound",
+          "12-hour battery",
+          "Waterproof",
+          "Voice assistant"
+        ],
+        "isOnSale": true,
+        "createdAt": "2024-01-05T00:00:00.000Z"
+      }
+    ],
+    "pagination": {
+      "currentPage": 1,
+      "totalPages": 1,
+      "totalItems": 5,
+      "itemsPerPage": 10
+    },
+    "filters": {
+      "categories": [
+        { "id": "electronics", "name": "Electronics", "count": 3 },
+        { "id": "computers", "name": "Computers", "count": 1 },
+        { "id": "wearables", "name": "Wearables", "count": 1 }
+      ],
+      "brands": [
+        { "id": "techbrand", "name": "TechBrand", "count": 1 },
+        { "id": "audiotech", "name": "AudioTech", "count": 1 },
+        { "id": "gametech", "name": "GameTech", "count": 1 },
+        { "id": "fittech", "name": "FitTech", "count": 1 },
+        { "id": "soundwave", "name": "SoundWave", "count": 1 }
+      ],
+      "priceRange": {
+        "min": 79.99,
+        "max": 1299.99
+      }
+    }
+  }
+}

@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { connectDB } from '../../../lib/db';
+import connectDB from '../../../lib/db';
 import User from '../../../models/User';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
@@ -20,17 +20,17 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: 'Email dan password harus diisi' });
     }
 
-    // Cari user dengan role composer
+    // Cari user dengan role composer (explicitly select password)
     const user = await User.findOne({ 
       email: email.toLowerCase(),
       role: 'composer'
-    });
+    }).select('+password');
 
     if (!user) {
       return res.status(401).json({ message: 'Email atau password salah' });
     }
 
-    // Verifikasi password
+    // Verify password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ message: 'Email atau password salah' });
@@ -52,9 +52,9 @@ export default async function handler(req, res) {
       { expiresIn: '24h' }
     );
 
-    // Set cookie
+    // Set cookie (accessible from client-side for dashboard verification)
     res.setHeader('Set-Cookie', [
-      `composer_token=${token}; HttpOnly; Path=/; Max-Age=86400; SameSite=Strict`
+      `composer_token=${token}; Path=/; Max-Age=86400; SameSite=Strict`
     ]);
 
     res.status(200).json({

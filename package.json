@@ -6,7 +6,21 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:ci": "jest --ci --coverage --watchAll=false",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "cypress:run:headless": "cypress run --headless",
+    "test:e2e": "cypress run",
+    "test:e2e:open": "cypress open",
+    "test:all": "npm run test:ci && npm run test:e2e",
+    "seo:generate": "node scripts/generateSEO.js",
+    "build:production": "npm run seo:generate && npm run build",
+    "optimize:db": "node scripts/optimizeDatabase.js optimize",
+    "analyze:db": "node scripts/optimizeDatabase.js analyze"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",
@@ -14,12 +28,17 @@
     "autoprefixer": "^10.4.16",
     "axios": "^1.11.0",
     "bcryptjs": "^2.4.3",
+    "critters": "^0.0.23",
+    "dotenv": "^17.2.2",
     "formidable": "^3.5.4",
     "google-auth-library": "^10.3.0",
+    "isomorphic-dompurify": "^2.26.0",
     "jsonwebtoken": "^9.0.2",
+    "lru-cache": "^11.2.1",
     "mongoose": "^7.8.7",
     "multer": "^2.0.2",
     "next": "13.5.6",
+    "node-cron": "^4.2.1",
     "nodemailer": "^6.9.7",
     "pdf-lib": "^1.17.1",
     "postcss": "^8.4.31",
@@ -27,10 +46,21 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hot-toast": "^2.4.1",
-    "tailwindcss": "^3.3.5"
+    "redis": "^5.8.2",
+    "tailwindcss": "^3.3.5",
+    "validator": "^13.15.15"
   },
   "devDependencies": {
+    "@cypress/react": "^9.0.1",
+    "@cypress/webpack-dev-server": "^5.1.1",
+    "@testing-library/jest-dom": "^6.8.0",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "cypress": "^15.2.0",
     "eslint": "8.52.0",
-    "eslint-config-next": "13.5.6"
+    "eslint-config-next": "13.5.6",
+    "jest": "^30.1.3",
+    "jest-environment-jsdom": "^30.1.2",
+    "node-mocks-http": "^1.17.2"
   }
 }
